@@ -1,11 +1,12 @@
 const { Pool } = require("pg");
 
+const dbUrl = process.env.DATABASE_URL || "";
+const needsSsl =
+  process.env.PGSSLMODE === "require" || dbUrl.includes("sslmode=require");
+
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl:
-    process.env.NODE_ENV === "production"
-      ? { rejectUnauthorized: false }
-      : false,
+  connectionString: dbUrl,
+  ssl: needsSsl ? { rejectUnauthorized: false } : false,
 });
 
 async function initDb() {
